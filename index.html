@@ -1,0 +1,1184 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full bg-slate-50">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TableBook - Restaurant Table Reservation & Management</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#f5f3ff',
+                            100: '#ede9fe',
+                            200: '#ddd6fe',
+                            300: '#c4b5fd',
+                            400: '#a78bfa',
+                            500: '#8b5cf6', // Primary Purple
+                            600: '#7c3aed',
+                            700: '#6d28d9',
+                            800: '#5b21b6',
+                            900: '#4c1d95',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; height: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+        .dark .custom-scrollbar::-webkit-scrollbar-thumb { background: #475569; }
+    </style>
+</head>
+<body class="h-full text-slate-800 dark:text-slate-100 dark:bg-slate-900 flex flex-col transition-colors duration-200">
+
+    <div class="flex h-screen overflow-hidden">
+        <!-- Sidebar Navigation -->
+        <aside id="sidebar" class="w-64 bg-white dark:bg-slate-800 border-r border-slate-200 dark:border-slate-700 flex flex-col flex-shrink-0 transition-all duration-300 z-30 absolute md:relative -translate-x-full md:translate-x-0 h-full">
+            <!-- Brand Logo -->
+            <div class="p-5 border-b border-slate-100 dark:border-slate-700 flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-xl bg-brand-500 flex items-center justify-center text-white shadow-md shadow-brand-500/30">
+                        <i class="fa-solid font-bold fa-chair text-lg"></i>
+                    </div>
+                    <div>
+                        <h1 class="font-bold text-lg leading-tight text-slate-900 dark:text-white">Table<span class="text-brand-500">Book</span></h1>
+                        <span class="text-xs text-slate-400 font-medium">Reservation System</span>
+                    </div>
+                </div>
+                <button id="closeSidebarBtn" class="md:hidden text-slate-400 hover:text-slate-600 dark:hover:text-slate-200">
+                    <i class="fa-solid fa-xmark text-xl"></i>
+                </button>
+            </div>
+
+            <!-- Navigation Links -->
+            <nav class="flex-1 px-3 py-4 space-y-1 overflow-y-auto custom-scrollbar">
+                <a href="#dashboard" onclick="navigateTo('dashboard')" class="nav-item flex items-center gap-3 px-3.5 py-2.5 rounded-xl font-medium text-sm transition-all duration-150 text-brand-600 bg-brand-50 dark:bg-brand-900/30 dark:text-brand-400">
+                    <i class="fa-solid fa-chart-pie w-5 text-center text-base"></i> Dashboard
+                </a>
+                <a href="#tables" onclick="navigateTo('tables')" class="nav-item flex items-center gap-3 px-3.5 py-2.5 rounded-xl font-medium text-sm text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700/50 transition-all duration-150">
+                    <i class="fa-solid fa-utensils w-5 text-center text-base"></i> Table Management
+                </a>
+                <a href="#bookings" onclick="navigateTo('bookings')" class="nav-item flex items-center gap-3 px-3.5 py-2.5 rounded-xl font-medium text-sm text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700/50 transition-all duration-150">
+                    <i class="fa-solid fa-book-bookmark w-5 text-center text-base"></i> Booking Management
+                </a>
+                <a href="#layout" onclick="navigateTo('layout')" class="nav-item flex items-center gap-3 px-3.5 py-2.5 rounded-xl font-medium text-sm text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700/50 transition-all duration-150">
+                    <i class="fa-solid fa-border-all w-5 text-center text-base"></i> Table Layout
+                </a>
+                <a href="#customers" onclick="navigateTo('customers')" class="nav-item flex items-center gap-3 px-3.5 py-2.5 rounded-xl font-medium text-sm text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700/50 transition-all duration-150">
+                    <i class="fa-solid fa-users w-5 text-center text-base"></i> Customer Profiles
+                </a>
+                <a href="#availability" onclick="navigateTo('availability')" class="nav-item flex items-center gap-3 px-3.5 py-2.5 rounded-xl font-medium text-sm text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700/50 transition-all duration-150">
+                    <i class="fa-solid fa-magnifying-glass-chart w-5 text-center text-base"></i> Real-Time Check
+                </a>
+                <a href="#calendar" onclick="navigateTo('calendar')" class="nav-item flex items-center gap-3 px-3.5 py-2.5 rounded-xl font-medium text-sm text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700/50 transition-all duration-150">
+                    <i class="fa-solid fa-calendar-days w-5 text-center text-base"></i> Booking Calendar
+                </a>
+                <a href="#reports" onclick="navigateTo('reports')" class="nav-item flex items-center gap-3 px-3.5 py-2.5 rounded-xl font-medium text-sm text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700/50 transition-all duration-150">
+                    <i class="fa-solid fa-chart-line w-5 text-center text-base"></i> Reports & Analytics
+                </a>
+            </nav>
+
+            <!-- User Info / Status Banner -->
+            <div class="p-4 border-t border-slate-100 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-800/50">
+                <div class="flex items-center gap-3">
+                    <img src="https://placehold.co/100x100/8b5cf6/ffffff?text=AD" alt="User Avatar" class="w-9 h-9 rounded-full ring-2 ring-brand-400/30">
+                    <div class="flex-1 min-w-0">
+                        <p class="text-sm font-semibold text-slate-800 dark:text-slate-200 truncate">Alex Morgan</p>
+                        <p id="roleBadge" class="text-xs text-brand-600 dark:text-brand-400 font-medium capitalize truncate">Administrator</p>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Sidebar Overlay (Mobile) -->
+        <div id="sidebarOverlay" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-20 hidden md:hidden" onclick="toggleSidebar()"></div>
+
+        <!-- Main Content Area -->
+        <div class="flex-1 flex flex-col min-w-0 overflow-hidden">
+            <!-- Top Navigation Bar -->
+            <header class="bg-white dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 px-4 sm:px-6 py-3 flex items-center justify-between z-10">
+                <div class="flex items-center gap-3">
+                    <button id="openSidebarBtn" onclick="toggleSidebar()" class="md:hidden text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 p-1.5 rounded-lg border border-slate-200 dark:border-slate-700">
+                        <i class="fa-solid fa-bars text-lg"></i>
+                    </button>
+                    <h2 id="pageTitle" class="text-lg font-bold text-slate-800 dark:text-white">Dashboard Overview</h2>
+                </div>
+
+                <div class="flex items-center gap-3">
+                    <!-- Role Switcher -->
+                    <div class="relative inline-block text-left">
+                        <select id="roleSelector" onchange="changeRole(this.value)" class="bg-slate-100 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 text-xs font-semibold rounded-lg px-2.5 py-1.5 text-slate-700 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-brand-500">
+                            <option value="Admin">Role: Admin</option>
+                            <option value="Manager">Role: Manager</option>
+                            <option value="Staff">Role: Staff</option>
+                        </select>
+                    </div>
+
+                    <!-- Dark Mode Toggle -->
+                    <button id="darkModeToggle" onclick="toggleDarkMode()" class="p-2 rounded-lg text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700 transition">
+                        <i class="fa-solid fa-moon text-base dark:hidden"></i>
+                        <i class="fa-solid fa-sun text-base hidden dark:inline"></i>
+                    </button>
+
+                    <!-- Notifications Button -->
+                    <button onclick="showToast('No new notifications', 'info')" class="p-2 rounded-lg text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700 transition relative">
+                        <i class="fa-solid fa-bell text-base"></i>
+                        <span class="absolute top-1.5 right-1.5 w-2 h-2 bg-brand-500 rounded-full"></span>
+                    </button>
+                </div>
+            </header>
+
+            <!-- Content Views Container -->
+            <main class="flex-1 overflow-y-auto p-4 sm:p-6 bg-slate-50 dark:bg-slate-900 custom-scrollbar">
+
+                <!-- 1. DASHBOARD MODULE -->
+                <section id="dashboard" class="module-section space-y-6">
+                    <!-- Stat Cards Grid -->
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+                        <div class="bg-white dark:bg-slate-800 rounded-2xl p-5 border border-slate-100 dark:border-slate-700/60 shadow-sm flex items-center justify-between">
+                            <div>
+                                <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Today's Bookings</p>
+                                <h3 id="statTodayBookings" class="text-2xl font-bold text-slate-900 dark:text-white mt-1">0</h3>
+                                <p class="text-xs text-emerald-500 mt-1 font-medium"><i class="fa-solid fa-arrow-trend-up mr-1"></i>+12% from yesterday</p>
+                            </div>
+                            <div class="w-12 h-12 rounded-xl bg-brand-50 dark:bg-brand-900/30 text-brand-500 flex items-center justify-center text-xl">
+                                <i class="fa-solid fa-calendar-check"></i>
+                            </div>
+                        </div>
+
+                        <div class="bg-white dark:bg-slate-800 rounded-2xl p-5 border border-slate-100 dark:border-slate-700/60 shadow-sm flex items-center justify-between">
+                            <div>
+                                <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Table Occupancy</p>
+                                <h3 id="statOccupancy" class="text-2xl font-bold text-slate-900 dark:text-white mt-1">0%</h3>
+                                <p class="text-xs text-brand-500 mt-1 font-medium"><i class="fa-solid fa-circle-info mr-1"></i>Active table capacity</p>
+                            </div>
+                            <div class="w-12 h-12 rounded-xl bg-purple-50 dark:bg-purple-900/30 text-purple-600 flex items-center justify-center text-xl">
+                                <i class="fa-solid fa-chair"></i>
+                            </div>
+                        </div>
+
+                        <div class="bg-white dark:bg-slate-800 rounded-2xl p-5 border border-slate-100 dark:border-slate-700/60 shadow-sm flex items-center justify-between">
+                            <div>
+                                <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Est. Today Revenue</p>
+                                <h3 id="statRevenue" class="text-2xl font-bold text-slate-900 dark:text-white mt-1">$0</h3>
+                                <p class="text-xs text-emerald-500 mt-1 font-medium"><i class="fa-solid fa-arrow-trend-up mr-1"></i>Based on seating</p>
+                            </div>
+                            <div class="w-12 h-12 rounded-xl bg-emerald-50 dark:bg-emerald-900/30 text-emerald-500 flex items-center justify-center text-xl">
+                                <i class="fa-solid fa-sack-dollar"></i>
+                            </div>
+                        </div>
+
+                        <div class="bg-white dark:bg-slate-800 rounded-2xl p-5 border border-slate-100 dark:border-slate-700/60 shadow-sm flex items-center justify-between">
+                            <div>
+                                <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Active Tables</p>
+                                <h3 id="statActiveTables" class="text-2xl font-bold text-slate-900 dark:text-white mt-1">0/0</h3>
+                                <p class="text-xs text-slate-400 mt-1 font-medium">Ready for guest seating</p>
+                            </div>
+                            <div class="w-12 h-12 rounded-xl bg-blue-50 dark:bg-blue-900/30 text-blue-500 flex items-center justify-center text-xl">
+                                <i class="fa-solid fa-table-cells"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Main Dashboard Section -->
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                        <!-- Recent Reservations -->
+                        <div class="lg:col-span-2 bg-white dark:bg-slate-800 rounded-2xl p-6 border border-slate-100 dark:border-slate-700/60 shadow-sm">
+                            <div class="flex items-center justify-between mb-4">
+                                <h3 class="font-bold text-slate-800 dark:text-white text-base">Today's Reservations</h3>
+                                <button onclick="navigateTo('bookings')" class="text-xs font-semibold text-brand-600 hover:text-brand-700 dark:text-brand-400">View All</button>
+                            </div>
+                            <div class="overflow-x-auto">
+                                <table class="w-full text-left text-sm">
+                                    <thead class="text-xs uppercase bg-slate-50 dark:bg-slate-700/50 text-slate-500 dark:text-slate-400 rounded-lg">
+                                        <tr>
+                                            <th class="px-3 py-2.5">Customer</th>
+                                            <th class="px-3 py-2.5">Time</th>
+                                            <th class="px-3 py-2.5">Party</th>
+                                            <th class="px-3 py-2.5">Table</th>
+                                            <th class="px-3 py-2.5">Status</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="dashBookingsTable" class="divide-y divide-slate-100 dark:divide-slate-700">
+                                        <!-- Dynamic Content -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <!-- Real-time Table Overview Widget -->
+                        <div class="bg-white dark:bg-slate-800 rounded-2xl p-6 border border-slate-100 dark:border-slate-700/60 shadow-sm flex flex-col">
+                            <h3 class="font-bold text-slate-800 dark:text-white text-base mb-4">Table Status Summary</h3>
+                            <div id="dashTableSummary" class="space-y-3 flex-1">
+                                <!-- Dynamic Breakdown -->
+                            </div>
+                            <button onclick="navigateTo('layout')" class="mt-4 w-full py-2.5 bg-brand-50 hover:bg-brand-100 dark:bg-brand-900/30 text-brand-600 dark:text-brand-300 font-semibold text-xs rounded-xl transition text-center">
+                                Open Floor Layout
+                            </button>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 2. TABLE MANAGEMENT MODULE -->
+                <section id="tables" class="module-section hidden space-y-6">
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                        <div class="flex items-center gap-3">
+                            <input type="text" id="tableSearchInput" onkeyup="renderTables()" placeholder="Search table name or location..." class="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-sm rounded-xl px-4 py-2.5 w-full sm:w-64 focus:outline-none focus:ring-2 focus:ring-brand-500">
+                            <select id="tableStatusFilter" onchange="renderTables()" class="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-sm rounded-xl px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-brand-500">
+                                <option value="All">All Statuses</option>
+                                <option value="Available">Available</option>
+                                <option value="Reserved">Reserved</option>
+                                <option value="Occupied">Occupied</option>
+                                <option value="Out of Service">Out of Service</option>
+                            </select>
+                        </div>
+                        <button onclick="openTableModal()" class="bg-brand-500 hover:bg-brand-600 text-white font-medium text-sm px-4 py-2.5 rounded-xl shadow-sm flex items-center justify-center gap-2 transition">
+                            <i class="fa-solid fa-plus"></i> Add New Table
+                        </button>
+                    </div>
+
+                    <!-- Tables Data Table -->
+                    <div class="bg-white dark:bg-slate-800 rounded-2xl border border-slate-100 dark:border-slate-700/60 shadow-sm overflow-hidden">
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left text-sm">
+                                <thead class="bg-slate-50 dark:bg-slate-700/50 text-xs font-semibold uppercase text-slate-500 dark:text-slate-400">
+                                    <tr>
+                                        <th class="px-6 py-3.5">Table ID / Name</th>
+                                        <th class="px-6 py-3.5">Capacity</th>
+                                        <th class="px-6 py-3.5">Location</th>
+                                        <th class="px-6 py-3.5">Floor</th>
+                                        <th class="px-6 py-3.5">Status</th>
+                                        <th class="px-6 py-3.5 text-right">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tablesTableBody" class="divide-y divide-slate-100 dark:divide-slate-700">
+                                    <!-- Dynamic Rows -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 3. BOOKING MANAGEMENT MODULE -->
+                <section id="bookings" class="module-section hidden space-y-6">
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                        <div class="flex flex-wrap items-center gap-3">
+                            <input type="text" id="bookingSearchInput" onkeyup="renderBookings()" placeholder="Search customer name or phone..." class="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-sm rounded-xl px-4 py-2.5 w-full sm:w-64 focus:outline-none focus:ring-2 focus:ring-brand-500">
+                            <select id="bookingStatusFilter" onchange="renderBookings()" class="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-sm rounded-xl px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-brand-500">
+                                <option value="All">All Statuses</option>
+                                <option value="Pending">Pending</option>
+                                <option value="Confirmed">Confirmed</option>
+                                <option value="Seated">Seated</option>
+                                <option value="Cancelled">Cancelled</option>
+                                <option value="No-Show">No-Show</option>
+                            </select>
+                        </div>
+                        <button onclick="openBookingModal()" class="bg-brand-500 hover:bg-brand-600 text-white font-medium text-sm px-4 py-2.5 rounded-xl shadow-sm flex items-center justify-center gap-2 transition">
+                            <i class="fa-solid fa-plus"></i> New Reservation
+                        </button>
+                    </div>
+
+                    <!-- Bookings Table -->
+                    <div class="bg-white dark:bg-slate-800 rounded-2xl border border-slate-100 dark:border-slate-700/60 shadow-sm overflow-hidden">
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left text-sm">
+                                <thead class="bg-slate-50 dark:bg-slate-700/50 text-xs font-semibold uppercase text-slate-500 dark:text-slate-400">
+                                    <tr>
+                                        <th class="px-6 py-3.5">Customer Details</th>
+                                        <th class="px-6 py-3.5">Date & Time</th>
+                                        <th class="px-6 py-3.5">Party Size</th>
+                                        <th class="px-6 py-3.5">Table Assigned</th>
+                                        <th class="px-6 py-3.5">Status</th>
+                                        <th class="px-6 py-3.5 text-right">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="bookingsTableBody" class="divide-y divide-slate-100 dark:divide-slate-700">
+                                    <!-- Dynamic Rows -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 4. TABLE LAYOUT MODULE -->
+                <section id="layout" class="module-section hidden space-y-6">
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white dark:bg-slate-800 p-4 rounded-2xl border border-slate-100 dark:border-slate-700/60 shadow-sm">
+                        <div class="flex items-center gap-2">
+                            <button onclick="filterFloor('Ground')" id="floorGroundBtn" class="px-4 py-2 rounded-xl text-xs font-bold transition bg-brand-500 text-white shadow-sm">Ground Floor</button>
+                            <button onclick="filterFloor('First')" id="floorFirstBtn" class="px-4 py-2 rounded-xl text-xs font-bold transition bg-slate-100 text-slate-600 dark:bg-slate-700 dark:text-slate-300">First Floor</button>
+                        </div>
+                        <!-- Status Legend -->
+                        <div class="flex flex-wrap items-center gap-4 text-xs font-medium">
+                            <div class="flex items-center gap-1.5"><span class="w-3 h-3 rounded-full bg-emerald-500"></span> Available</div>
+                            <div class="flex items-center gap-1.5"><span class="w-3 h-3 rounded-full bg-amber-500"></span> Reserved</div>
+                            <div class="flex items-center gap-1.5"><span class="w-3 h-3 rounded-full bg-rose-500"></span> Occupied</div>
+                            <div class="flex items-center gap-1.5"><span class="w-3 h-3 rounded-full bg-slate-400"></span> Out of Service</div>
+                        </div>
+                    </div>
+
+                    <!-- Floor Grid Canvas Visualizer -->
+                    <div class="bg-white dark:bg-slate-800 rounded-2xl p-6 border border-slate-100 dark:border-slate-700/60 shadow-sm">
+                        <h3 id="floorTitle" class="text-sm font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-6">Ground Floor Plan</h3>
+                        <div id="floorPlanGrid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6">
+                            <!-- Visual Dynamic Table Cards -->
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 5. CUSTOMER MANAGEMENT MODULE -->
+                <section id="customers" class="module-section hidden space-y-6">
+                    <div class="flex items-center justify-between gap-4">
+                        <input type="text" id="customerSearchInput" onkeyup="renderCustomers()" placeholder="Search customer name, phone, or email..." class="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-sm rounded-xl px-4 py-2.5 w-full sm:w-72 focus:outline-none focus:ring-2 focus:ring-brand-500">
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="customersGrid">
+                        <!-- Dynamic Customer Cards -->
+                    </div>
+                </section>
+
+                <!-- 6. REAL-TIME AVAILABILITY MODULE -->
+                <section id="availability" class="module-section hidden space-y-6">
+                    <div class="bg-white dark:bg-slate-800 p-6 rounded-2xl border border-slate-100 dark:border-slate-700/60 shadow-sm space-y-4">
+                        <h3 class="text-base font-bold text-slate-800 dark:text-white">Check Real-Time Table Availability</h3>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-500 dark:text-slate-400 mb-1">Date</label>
+                                <input type="date" id="availDate" class="w-full bg-slate-50 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-500 dark:text-slate-400 mb-1">Time Slot</label>
+                                <input type="time" id="availTime" value="19:00" class="w-full bg-slate-50 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-500 dark:text-slate-400 mb-1">Party Size</label>
+                                <input type="number" id="availGuests" value="2" min="1" max="20" class="w-full bg-slate-50 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-500 dark:text-slate-400 mb-1">Location Preference</label>
+                                <select id="availLocation" class="w-full bg-slate-50 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500">
+                                    <option value="All">Any Location</option>
+                                    <option value="Window">Window</option>
+                                    <option value="Center">Center</option>
+                                    <option value="Private">Private</option>
+                                    <option value="Outdoor">Outdoor</option>
+                                </select>
+                            </div>
+                        </div>
+                        <button onclick="checkAvailability()" class="w-full bg-brand-500 hover:bg-brand-600 text-white font-medium text-sm py-2.5 rounded-xl shadow-sm transition">
+                            Search Available Tables
+                        </button>
+                    </div>
+
+                    <!-- Available Results Container -->
+                    <div id="availResultsContainer" class="space-y-4">
+                        <p class="text-xs text-slate-400 font-medium">Select criteria above to search dynamically.</p>
+                    </div>
+                </section>
+
+                <!-- 7. BOOKING CALENDAR MODULE -->
+                <section id="calendar" class="module-section hidden space-y-6">
+                    <div class="bg-white dark:bg-slate-800 rounded-2xl p-6 border border-slate-100 dark:border-slate-700/60 shadow-sm">
+                        <div class="flex items-center justify-between mb-6">
+                            <h3 class="font-bold text-slate-800 dark:text-white text-base">July 2026 Schedule</h3>
+                            <span class="text-xs text-slate-400 font-medium">Click any date to view reservations</span>
+                        </div>
+                        <div class="grid grid-cols-7 gap-2 text-center text-xs font-bold text-slate-400 mb-2">
+                            <div>SUN</div><div>MON</div><div>TUE</div><div>WED</div><div>THU</div><div>FRI</div><div>SAT</div>
+                        </div>
+                        <div id="calendarGrid" class="grid grid-cols-7 gap-2">
+                            <!-- Dynamic Calendar Days -->
+                        </div>
+                    </div>
+
+                    <!-- Selected Date Bookings View -->
+                    <div id="calendarDayDetails" class="bg-white dark:bg-slate-800 rounded-2xl p-6 border border-slate-100 dark:border-slate-700/60 shadow-sm hidden">
+                        <h4 id="selectedCalDateTitle" class="font-bold text-slate-800 dark:text-white text-sm mb-4">Bookings for Selected Date</h4>
+                        <div id="selectedCalDateList" class="space-y-2">
+                            <!-- Dynamic List -->
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 8. REPORTS & ANALYTICS MODULE -->
+                <section id="reports" class="module-section hidden space-y-6">
+                    <div class="flex items-center justify-between">
+                        <h3 class="font-bold text-slate-800 dark:text-white text-base">Performance & Analytics Summary</h3>
+                        <button onclick="exportReports()" class="bg-slate-800 dark:bg-slate-700 hover:bg-slate-900 text-white text-xs font-semibold px-4 py-2.5 rounded-xl transition flex items-center gap-2">
+                            <i class="fa-solid fa-download"></i> Export Report (CSV)
+                        </button>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <!-- Table Occupancy Distribution Chart -->
+                        <div class="bg-white dark:bg-slate-800 p-6 rounded-2xl border border-slate-100 dark:border-slate-700/60 shadow-sm">
+                            <h4 class="text-sm font-bold text-slate-800 dark:text-white mb-4">Table Status Distribution</h4>
+                            <div class="space-y-4" id="reportStatusBars">
+                                <!-- Dynamic progress bars -->
+                            </div>
+                        </div>
+
+                        <!-- Seating Capacity Distribution -->
+                        <div class="bg-white dark:bg-slate-800 p-6 rounded-2xl border border-slate-100 dark:border-slate-700/60 shadow-sm">
+                            <h4 class="text-sm font-bold text-slate-800 dark:text-white mb-4">Revenue Breakdown by Location</h4>
+                            <div class="space-y-4" id="reportLocationBars">
+                                <!-- Dynamic progress bars -->
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+            </main>
+        </div>
+    </div>
+
+    <!-- MODAL: ADD / EDIT TABLE -->
+    <div id="tableModal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white dark:bg-slate-800 rounded-2xl max-w-md w-full p-6 shadow-xl border border-slate-100 dark:border-slate-700">
+            <h3 id="tableModalTitle" class="text-lg font-bold text-slate-900 dark:text-white mb-4">Add Table</h3>
+            <form id="tableForm" onsubmit="handleTableSubmit(event)" class="space-y-4">
+                <input type="hidden" id="tableFormId">
+                <div>
+                    <label class="block text-xs font-semibold text-slate-500 dark:text-slate-400 mb-1">Table Name/Number</label>
+                    <input type="text" id="tableNameInput" required placeholder="e.g. Table A1" class="w-full bg-slate-50 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500">
+                </div>
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-500 dark:text-slate-400 mb-1">Seating Capacity</label>
+                        <select id="tableCapacityInput" class="w-full bg-slate-50 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500">
+                            <option value="2">2-Seater</option>
+                            <option value="4">4-Seater</option>
+                            <option value="6">6-Seater</option>
+                            <option value="8">8-Seater</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-500 dark:text-slate-400 mb-1">Floor Level</label>
+                        <select id="tableFloorInput" class="w-full bg-slate-50 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500">
+                            <option value="Ground">Ground Floor</option>
+                            <option value="First">First Floor</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-500 dark:text-slate-400 mb-1">Location Zone</label>
+                        <select id="tableLocationInput" class="w-full bg-slate-50 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500">
+                            <option value="Window">Window</option>
+                            <option value="Center">Center</option>
+                            <option value="Private">Private</option>
+                            <option value="Outdoor">Outdoor</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-500 dark:text-slate-400 mb-1">Initial Status</label>
+                        <select id="tableStatusInput" class="w-full bg-slate-50 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500">
+                            <option value="Available">Available</option>
+                            <option value="Reserved">Reserved</option>
+                            <option value="Occupied">Occupied</option>
+                            <option value="Out of Service">Out of Service</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="flex items-center justify-end gap-3 pt-4 border-t border-slate-100 dark:border-slate-700">
+                    <button type="button" onclick="closeModal('tableModal')" class="px-4 py-2 rounded-xl text-xs font-semibold text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 transition">Cancel</button>
+                    <button type="submit" class="px-4 py-2 rounded-xl text-xs font-semibold bg-brand-500 hover:bg-brand-600 text-white transition">Save Table</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL: ADD / EDIT BOOKING -->
+    <div id="bookingModal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white dark:bg-slate-800 rounded-2xl max-w-md w-full p-6 shadow-xl border border-slate-100 dark:border-slate-700">
+            <h3 id="bookingModalTitle" class="text-lg font-bold text-slate-900 dark:text-white mb-4">Create Reservation</h3>
+            <form id="bookingForm" onsubmit="handleBookingSubmit(event)" class="space-y-4">
+                <input type="hidden" id="bookingFormId">
+                <div>
+                    <label class="block text-xs font-semibold text-slate-500 dark:text-slate-400 mb-1">Customer Name</label>
+                    <input type="text" id="bookCustName" required placeholder="John Doe" class="w-full bg-slate-50 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-500 dark:text-slate-400 mb-1">Contact Phone</label>
+                    <input type="tel" id="bookCustPhone" required placeholder="+1 555-0192" class="w-full bg-slate-50 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500">
+                </div>
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-500 dark:text-slate-400 mb-1">Date</label>
+                        <input type="date" id="bookDate" required class="w-full bg-slate-50 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-500 dark:text-slate-400 mb-1">Time</label>
+                        <input type="time" id="bookTime" required class="w-full bg-slate-50 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500">
+                    </div>
+                </div>
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-500 dark:text-slate-400 mb-1">Party Size</label>
+                        <input type="number" id="bookParty" min="1" max="20" required value="2" class="w-full bg-slate-50 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-500 dark:text-slate-400 mb-1">Assign Table</label>
+                        <select id="bookTableSelect" class="w-full bg-slate-50 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500">
+                            <!-- Populated Dynamically -->
+                        </select>
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-500 dark:text-slate-400 mb-1">Status</label>
+                    <select id="bookStatusSelect" class="w-full bg-slate-50 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500">
+                        <option value="Pending">Pending</option>
+                        <option value="Confirmed">Confirmed</option>
+                        <option value="Seated">Seated</option>
+                        <option value="Cancelled">Cancelled</option>
+                        <option value="No-Show">No-Show</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-500 dark:text-slate-400 mb-1">Special Requests</label>
+                    <textarea id="bookNotes" rows="2" placeholder="Anniversary table, high chair, etc." class="w-full bg-slate-50 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500"></textarea>
+                </div>
+                <div class="flex items-center justify-end gap-3 pt-4 border-t border-slate-100 dark:border-slate-700">
+                    <button type="button" onclick="closeModal('bookingModal')" class="px-4 py-2 rounded-xl text-xs font-semibold text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 transition">Cancel</button>
+                    <button type="submit" class="px-4 py-2 rounded-xl text-xs font-semibold bg-brand-500 hover:bg-brand-600 text-white transition">Save Booking</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL: SIMULATED CONFIRMATION EMAIL -->
+    <div id="confirmationModal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white dark:bg-slate-800 rounded-2xl max-w-md w-full p-6 shadow-xl border border-slate-100 dark:border-slate-700 text-center space-y-4">
+            <div class="w-12 h-12 rounded-full bg-emerald-100 dark:bg-emerald-900/30 text-emerald-500 mx-auto flex items-center justify-center text-xl">
+                <i class="fa-solid fa-paper-plane"></i>
+            </div>
+            <h3 class="text-lg font-bold text-slate-900 dark:text-white">Simulated Email Sent!</h3>
+            <p id="confirmModalText" class="text-xs text-slate-500 dark:text-slate-400">Confirmation notice sent to guest.</p>
+            <button onclick="closeModal('confirmationModal')" class="w-full py-2 bg-brand-500 hover:bg-brand-600 text-white font-semibold text-xs rounded-xl transition">
+                Close Notice
+            </button>
+        </div>
+    </div>
+
+    <!-- TOAST NOTIFICATION CONTAINER -->
+    <div id="toastContainer" class="fixed bottom-5 right-5 z-50 space-y-2 pointer-events-none"></div>
+
+    <!-- MAIN INTERACTIVE APPLICATION LOGIC -->
+    <script>
+        // --- INITIAL SEED DATA MANAGEMENT ---
+        const initialTables = [
+            { id: 1, name: "Table A1", capacity: 2, location: "Window", status: "Available", floor: "Ground" },
+            { id: 2, name: "Table B2", capacity: 4, location: "Center", status: "Available", floor: "Ground" },
+            { id: 3, name: "Table C1", capacity: 6, location: "Private", status: "Reserved", floor: "First" },
+            { id: 4, name: "Table D4", capacity: 8, location: "Outdoor", status: "Occupied", floor: "Ground" },
+            { id: 5, name: "Table E2", capacity: 2, location: "Window", status: "Out of Service", floor: "First" },
+            { id: 6, name: "Table F3", capacity: 4, location: "Center", status: "Available", floor: "Ground" }
+        ];
+
+        const initialBookings = [
+            { id: 1, table_id: 1, cust_name: "Sarah Jenkins", cust_phone: "+1 555-0192", cust_email: "sarah@example.com", booking_date: "2026-07-01", booking_time: "19:00", party_size: 2, status: "Confirmed", special_requests: "Window seat preferred" },
+            { id: 2, table_id: 3, cust_name: "Michael Scott", cust_phone: "+1 555-0144", cust_email: "michael@example.com", booking_date: "2026-07-01", booking_time: "20:00", party_size: 6, status: "Pending", special_requests: "Birthday celebration" },
+            { id: 3, table_id: 4, cust_name: "Elena Rostova", cust_phone: "+1 555-0188", cust_email: "elena@example.com", booking_date: "2026-07-01", booking_time: "18:30", party_size: 8, status: "Seated", special_requests: "Outdoor heater" }
+        ];
+
+        const initialCustomers = [
+            { id: 1, name: "Sarah Jenkins", email: "sarah@example.com", phone: "+1 555-0192", total_visits: 5, preferences: "Window seat, Red wine" },
+            { id: 2, name: "Michael Scott", email: "michael@example.com", phone: "+1 555-0144", total_visits: 2, preferences: "Large tables, Desserts" },
+            { id: 3, name: "Elena Rostova", email: "elena@example.com", phone: "+1 555-0188", total_visits: 8, preferences: "Outdoor seating, Vegan" }
+        ];
+
+        // Persistent Application State
+        let tables = JSON.parse(localStorage.getItem('tb_tables')) || initialTables;
+        let bookings = JSON.parse(localStorage.getItem('tb_bookings')) || initialBookings;
+        let customers = JSON.parse(localStorage.getItem('tb_customers')) || initialCustomers;
+        let activeRole = 'Admin';
+        let currentFloorFilter = 'Ground';
+
+        function saveData() {
+            localStorage.setItem('tb_tables', JSON.stringify(tables));
+            localStorage.setItem('tb_bookings', JSON.stringify(bookings));
+            localStorage.setItem('tb_customers', JSON.stringify(customers));
+            refreshCurrentView();
+        }
+
+        // --- NAVIGATION & UI HANDLERS ---
+        function navigateTo(sectionId) {
+            document.querySelectorAll('.module-section').forEach(sec => sec.classList.add('hidden'));
+            const target = document.getElementById(sectionId);
+            if (target) target.classList.remove('hidden');
+
+            // Update sidebar highlight
+            document.querySelectorAll('.nav-item').forEach(link => {
+                if (link.getAttribute('href') === '#' + sectionId) {
+                    link.className = 'nav-item flex items-center gap-3 px-3.5 py-2.5 rounded-xl font-medium text-sm transition-all duration-150 text-brand-600 bg-brand-50 dark:bg-brand-900/30 dark:text-brand-400';
+                } else {
+                    link.className = 'nav-item flex items-center gap-3 px-3.5 py-2.5 rounded-xl font-medium text-sm text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700/50 transition-all duration-150';
+                }
+            });
+
+            // Set Page Title
+            const titles = {
+                dashboard: 'Dashboard Overview',
+                tables: 'Table Management',
+                bookings: 'Booking Management',
+                layout: 'Visual Floor Plan Layout',
+                customers: 'Customer Profiles & History',
+                availability: 'Real-Time Table Availability',
+                calendar: 'Booking Calendar View',
+                reports: 'Reports & Analytics'
+            };
+            document.getElementById('pageTitle').innerText = titles[sectionId] || 'TableBook System';
+
+            refreshCurrentView();
+            if (window.innerWidth < 768) toggleSidebar(false);
+        }
+
+        function toggleSidebar(forceState) {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebarOverlay');
+            const isHidden = sidebar.classList.contains('-translate-x-full');
+            if (forceState === false || !isHidden) {
+                sidebar.classList.add('-translate-x-full');
+                overlay.classList.add('hidden');
+            } else {
+                sidebar.classList.remove('-translate-x-full');
+                overlay.classList.remove('hidden');
+            }
+        }
+
+        function toggleDarkMode() {
+            document.documentElement.classList.toggle('dark');
+        }
+
+        function changeRole(role) {
+            activeRole = role;
+            document.getElementById('roleBadge').innerText = role + ' Role';
+            showToast(`Switched to ${role} role view`, 'info');
+        }
+
+        function showToast(msg, type = 'success') {
+            const container = document.getElementById('toastContainer');
+            const toast = document.createElement('div');
+            const colors = {
+                success: 'bg-emerald-600 text-white',
+                info: 'bg-brand-600 text-white',
+                danger: 'bg-rose-600 text-white'
+            };
+            toast.className = `${colors[type] || colors.info} text-xs font-semibold px-4 py-3 rounded-xl shadow-lg transition-all duration-300 pointer-events-auto flex items-center gap-2`;
+            toast.innerHTML = `<i class="fa-solid fa-circle-info"></i> ${msg}`;
+            container.appendChild(toast);
+            setTimeout(() => {
+                toast.classList.add('opacity-0', 'translate-y-2');
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.add('hidden');
+        }
+
+        // --- DASHBOARD MODULE ---
+        function renderDashboard() {
+            document.getElementById('statTodayBookings').innerText = bookings.length;
+            const occupiedCount = tables.filter(t => t.status === 'Occupied' || t.status === 'Reserved').length;
+            const occupancyRate = tables.length ? Math.round((occupiedCount / tables.length) * 100) : 0;
+            document.getElementById('statOccupancy').innerText = occupancyRate + '%';
+            
+            // Estimated Revenue calculation based on seats occupied ($35 per seat avg)
+            const seatedSeats = bookings.filter(b => b.status === 'Seated' || b.status === 'Confirmed').reduce((a, b) => a + parseInt(b.party_size), 0);
+            document.getElementById('statRevenue').innerText = '$' + (seatedSeats * 35);
+            document.getElementById('statActiveTables').innerText = `${tables.filter(t => t.status === 'Available').length}/${tables.length}`;
+
+            // Dashboard Bookings Table
+            const tbody = document.getElementById('dashBookingsTable');
+            tbody.innerHTML = bookings.slice(0, 5).map(b => {
+                const table = tables.find(t => t.id == b.table_id);
+                return `
+                    <tr class="hover:bg-slate-50 dark:hover:bg-slate-700/30">
+                        <td class="px-3 py-3 font-medium text-slate-900 dark:text-white">${b.cust_name}</td>
+                        <td class="px-3 py-3 text-slate-500 dark:text-slate-400">${b.booking_time}</td>
+                        <td class="px-3 py-3 text-slate-500 dark:text-slate-400">${b.party_size} Guests</td>
+                        <td class="px-3 py-3 font-semibold text-slate-700 dark:text-slate-300">${table ? table.name : 'Unassigned'}</td>
+                        <td class="px-3 py-3">${getStatusBadge(b.status)}</td>
+                    </tr>
+                `;
+            }).join('') || `<tr><td colspan="5" class="p-4 text-center text-xs text-slate-400">No reservations registered today.</td></tr>`;
+
+            // Dashboard Table Summary Breakdown
+            const summaryContainer = document.getElementById('dashTableSummary');
+            const statuses = ['Available', 'Reserved', 'Occupied', 'Out of Service'];
+            summaryContainer.innerHTML = statuses.map(st => {
+                const count = tables.filter(t => t.status === st).length;
+                const percentage = tables.length ? Math.round((count / tables.length) * 100) : 0;
+                return `
+                    <div>
+                        <div class="flex justify-between text-xs font-semibold mb-1">
+                            <span class="text-slate-600 dark:text-slate-300">${st}</span>
+                            <span class="text-slate-400">${count} (${percentage}%)</span>
+                        </div>
+                        <div class="w-full bg-slate-100 dark:bg-slate-700 h-2 rounded-full overflow-hidden">
+                            <div class="h-full ${getStatusColorClass(st)}" style="width: ${percentage}%"></div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // --- TABLE MANAGEMENT MODULE ---
+        function renderTables() {
+            const query = document.getElementById('tableSearchInput').value.toLowerCase();
+            const filter = document.getElementById('tableStatusFilter').value;
+            const tbody = document.getElementById('tablesTableBody');
+
+            const filtered = tables.filter(t => {
+                const matchesSearch = t.name.toLowerCase().includes(query) || t.location.toLowerCase().includes(query);
+                const matchesFilter = filter === 'All' || t.status === filter;
+                return matchesSearch && matchesFilter;
+            });
+
+            tbody.innerHTML = filtered.map(t => `
+                <tr class="hover:bg-slate-50 dark:hover:bg-slate-700/30 transition">
+                    <td class="px-6 py-4 font-bold text-slate-900 dark:text-white">${t.name}</td>
+                    <td class="px-6 py-4 text-slate-600 dark:text-slate-300">${t.capacity}-Seater</td>
+                    <td class="px-6 py-4 text-slate-600 dark:text-slate-300">${t.location} Zone</td>
+                    <td class="px-6 py-4 text-slate-600 dark:text-slate-300">${t.floor} Floor</td>
+                    <td class="px-6 py-4">${getStatusBadge(t.status)}</td>
+                    <td class="px-6 py-4 text-right space-x-2">
+                        <button onclick="editTable(${t.id})" class="text-xs font-semibold text-brand-600 dark:text-brand-400 hover:underline">Edit</button>
+                        <button onclick="deleteTable(${t.id})" class="text-xs font-semibold text-rose-600 hover:underline">Delete</button>
+                    </td>
+                </tr>
+            `).join('') || `<tr><td colspan="6" class="p-6 text-center text-xs text-slate-400">No tables matching filter criteria.</td></tr>`;
+        }
+
+        function openTableModal(table = null) {
+            document.getElementById('tableFormId').value = table ? table.id : '';
+            document.getElementById('tableNameInput').value = table ? table.name : '';
+            document.getElementById('tableCapacityInput').value = table ? table.capacity : '2';
+            document.getElementById('tableFloorInput').value = table ? table.floor : 'Ground';
+            document.getElementById('tableLocationInput').value = table ? table.location : 'Window';
+            document.getElementById('tableStatusInput').value = table ? table.status : 'Available';
+            document.getElementById('tableModalTitle').innerText = table ? 'Edit Table' : 'Add New Table';
+            document.getElementById('tableModal').classList.remove('hidden');
+        }
+
+        function handleTableSubmit(e) {
+            e.preventDefault();
+            const id = document.getElementById('tableFormId').value;
+            const newTable = {
+                id: id ? parseInt(id) : Date.now(),
+                name: document.getElementById('tableNameInput').value,
+                capacity: parseInt(document.getElementById('tableCapacityInput').value),
+                floor: document.getElementById('tableFloorInput').value,
+                location: document.getElementById('tableLocationInput').value,
+                status: document.getElementById('tableStatusInput').value
+            };
+
+            if (id) {
+                tables = tables.map(t => t.id == id ? newTable : t);
+                showToast('Table details updated');
+            } else {
+                tables.push(newTable);
+                showToast('New table added to layout');
+            }
+            saveData();
+            closeModal('tableModal');
+        }
+
+        function editTable(id) {
+            const table = tables.find(t => t.id == id);
+            if (table) openTableModal(table);
+        }
+
+        function deleteTable(id) {
+            if (confirm("Are you sure you want to delete this table?")) {
+                tables = tables.filter(t => t.id != id);
+                saveData();
+                showToast('Table deleted', 'danger');
+            }
+        }
+
+        // --- BOOKING MANAGEMENT MODULE ---
+        function renderBookings() {
+            const query = document.getElementById('bookingSearchInput').value.toLowerCase();
+            const filter = document.getElementById('bookingStatusFilter').value;
+            const tbody = document.getElementById('bookingsTableBody');
+
+            const filtered = bookings.filter(b => {
+                const matchesSearch = b.cust_name.toLowerCase().includes(query) || b.cust_phone.includes(query);
+                const matchesFilter = filter === 'All' || b.status === filter;
+                return matchesSearch && matchesFilter;
+            });
+
+            tbody.innerHTML = filtered.map(b => {
+                const table = tables.find(t => t.id == b.table_id);
+                return `
+                    <tr class="hover:bg-slate-50 dark:hover:bg-slate-700/30 transition">
+                        <td class="px-6 py-4">
+                            <div class="font-bold text-slate-900 dark:text-white">${b.cust_name}</div>
+                            <div class="text-xs text-slate-400">${b.cust_phone}</div>
+                        </td>
+                        <td class="px-6 py-4 text-slate-600 dark:text-slate-300">
+                            <div>${b.booking_date}</div>
+                            <div class="text-xs font-semibold text-brand-600 dark:text-brand-400">${b.booking_time}</div>
+                        </td>
+                        <td class="px-6 py-4 text-slate-600 dark:text-slate-300">${b.party_size} Guests</td>
+                        <td class="px-6 py-4 font-semibold text-slate-800 dark:text-slate-200">${table ? table.name : 'Unassigned'}</td>
+                        <td class="px-6 py-4">${getStatusBadge(b.status)}</td>
+                        <td class="px-6 py-4 text-right space-x-2">
+                            <button onclick="sendConfirmation(${b.id})" class="text-xs font-semibold text-emerald-600 hover:underline"><i class="fa-solid fa-envelope mr-1"></i>Notify</button>
+                            <button onclick="editBooking(${b.id})" class="text-xs font-semibold text-brand-600 dark:text-brand-400 hover:underline">Edit</button>
+                            <button onclick="deleteBooking(${b.id})" class="text-xs font-semibold text-rose-600 hover:underline">Cancel</button>
+                        </td>
+                    </tr>
+                `;
+            }).join('') || `<tr><td colspan="6" class="p-6 text-center text-xs text-slate-400">No reservations match specified criteria.</td></tr>`;
+        }
+
+        function openBookingModal(booking = null, preSelectTableId = null) {
+            // Populate table selection dropdown
+            const tableSelect = document.getElementById('bookTableSelect');
+            tableSelect.innerHTML = tables.map(t => `<option value="${t.id}">${t.name} (${t.capacity}-Seater - ${t.location})</option>`).join('');
+
+            document.getElementById('bookingFormId').value = booking ? booking.id : '';
+            document.getElementById('bookCustName').value = booking ? booking.cust_name : '';
+            document.getElementById('bookCustPhone').value = booking ? booking.cust_phone : '';
+            document.getElementById('bookDate').value = booking ? booking.booking_date : new Date().toISOString().split('T')[0];
+            document.getElementById('bookTime').value = booking ? booking.booking_time : '19:00';
+            document.getElementById('bookParty').value = booking ? booking.party_size : '2';
+            document.getElementById('bookTableSelect').value = booking ? booking.table_id : (preSelectTableId || tables[0]?.id || '');
+            document.getElementById('bookStatusSelect').value = booking ? booking.status : 'Confirmed';
+            document.getElementById('bookNotes').value = booking ? booking.special_requests : '';
+
+            document.getElementById('bookingModalTitle').innerText = booking ? 'Edit Reservation' : 'Create New Reservation';
+            document.getElementById('bookingModal').classList.remove('hidden');
+        }
+
+        function handleBookingSubmit(e) {
+            e.preventDefault();
+            const id = document.getElementById('bookingFormId').value;
+            const custName = document.getElementById('bookCustName').value;
+            const newBooking = {
+                id: id ? parseInt(id) : Date.now(),
+                table_id: parseInt(document.getElementById('bookTableSelect').value),
+                cust_name: custName,
+                cust_phone: document.getElementById('bookCustPhone').value,
+                cust_email: custName.toLowerCase().replace(/\s+/g, '') + '@example.com',
+                booking_date: document.getElementById('bookDate').value,
+                booking_time: document.getElementById('bookTime').value,
+                party_size: parseInt(document.getElementById('bookParty').value),
+                status: document.getElementById('bookStatusSelect').value,
+                special_requests: document.getElementById('bookNotes').value
+            };
+
+            if (id) {
+                bookings = bookings.map(b => b.id == id ? newBooking : b);
+                showToast('Booking details updated');
+            } else {
+                bookings.push(newBooking);
+                // Also add/update customer entry
+                let cust = customers.find(c => c.name.toLowerCase() === custName.toLowerCase());
+                if (cust) {
+                    cust.total_visits += 1;
+                } else {
+                    customers.push({ id: Date.now(), name: custName, email: newBooking.cust_email, phone: newBooking.cust_phone, total_visits: 1, preferences: newBooking.special_requests || 'None' });
+                }
+                showToast('New reservation created successfully!');
+            }
+            saveData();
+            closeModal('bookingModal');
+        }
+
+        function editBooking(id) {
+            const booking = bookings.find(b => b.id == id);
+            if (booking) openBookingModal(booking);
+        }
+
+        function deleteBooking(id) {
+            if (confirm("Are you sure you want to cancel this booking?")) {
+                bookings = bookings.filter(b => b.id != id);
+                saveData();
+                showToast('Booking cancelled', 'danger');
+            }
+        }
+
+        function sendConfirmation(bookingId) {
+            const booking = bookings.find(b => b.id == bookingId);
+            if (!booking) return;
+            const text = `Confirmation message simulated for ${booking.cust_name}. Details sent via SMS (${booking.cust_phone}) & Email for table on ${booking.booking_date} at ${booking.booking_time}.`;
+            document.getElementById('confirmModalText').innerText = text;
+            document.getElementById('confirmationModal').classList.remove('hidden');
+        }
+
+        // --- VISUAL FLOOR LAYOUT MODULE ---
+        function filterFloor(floorName) {
+            currentFloorFilter = floorName;
+            document.getElementById('floorGroundBtn').className = floorName === 'Ground' ? 'px-4 py-2 rounded-xl text-xs font-bold transition bg-brand-500 text-white shadow-sm' : 'px-4 py-2 rounded-xl text-xs font-bold transition bg-slate-100 text-slate-600 dark:bg-slate-700 dark:text-slate-300';
+            document.getElementById('floorFirstBtn').className = floorName === 'First' ? 'px-4 py-2 rounded-xl text-xs font-bold transition bg-brand-500 text-white shadow-sm' : 'px-4 py-2 rounded-xl text-xs font-bold transition bg-slate-100 text-slate-600 dark:bg-slate-700 dark:text-slate-300';
+            document.getElementById('floorTitle').innerText = `${floorName} Floor Plan`;
+            renderFloorPlan();
+        }
+
+        function renderFloorPlan() {
+            const container = document.getElementById('floorPlanGrid');
+            const floorTables = tables.filter(t => t.floor === currentFloorFilter);
+
+            container.innerHTML = floorTables.map(t => {
+                const statusBorderClass = {
+                    Available: 'border-emerald-500 hover:bg-emerald-50/50 dark:hover:bg-emerald-900/10',
+                    Reserved: 'border-amber-500 hover:bg-amber-50/50 dark:hover:bg-amber-900/10',
+                    Occupied: 'border-rose-500 hover:bg-rose-50/50 dark:hover:bg-rose-900/10',
+                    'Out of Service': 'border-slate-300 opacity-60'
+                }[t.status] || 'border-slate-200';
+
+                return `
+                    <div class="border-2 ${statusBorderClass} rounded-2xl p-4 transition-all duration-200 flex flex-col justify-between h-36 bg-white dark:bg-slate-800 shadow-sm relative group">
+                        <div class="flex items-center justify-between">
+                            <span class="font-bold text-sm text-slate-800 dark:text-white">${t.name}</span>
+                            <span class="text-xs text-slate-400 font-medium">${t.capacity} Seats</span>
+                        </div>
+                        <div class="text-xs text-slate-500 dark:text-slate-400 font-medium">${t.location} Zone</div>
+                        <div class="flex items-center justify-between pt-2 border-t border-slate-100 dark:border-slate-700">
+                            ${getStatusBadge(t.status)}
+                            <button onclick="quickTableAction(${t.id})" class="text-xs font-semibold text-brand-600 dark:text-brand-400 hover:underline">Action</button>
+                        </div>
+                    </div>
+                `;
+            }).join('') || `<div class="col-span-full py-8 text-center text-xs text-slate-400">No tables configured for this floor level.</div>`;
+        }
+
+        function quickTableAction(tableId) {
+            const table = tables.find(t => t.id == tableId);
+            if (!table) return;
+
+            if (table.status === 'Available') {
+                openBookingModal(null, table.id);
+            } else {
+                // Toggle status options
+                const nextStatus = table.status === 'Occupied' ? 'Available' : 'Occupied';
+                table.status = nextStatus;
+                saveData();
+                showToast(`Table ${table.name} status changed to ${nextStatus}`);
+            }
+        }
+
+        // --- CUSTOMER MANAGEMENT MODULE ---
+        function renderCustomers() {
+            const query = document.getElementById('customerSearchInput').value.toLowerCase();
+            const container = document.getElementById('customersGrid');
+
+            const filtered = customers.filter(c => c.name.toLowerCase().includes(query) || c.phone.includes(query) || c.email.toLowerCase().includes(query));
+
+            container.innerHTML = filtered.map(c => `
+                <div class="bg-white dark:bg-slate-800 rounded-2xl p-5 border border-slate-100 dark:border-slate-700/60 shadow-sm space-y-3">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-full bg-brand-100 dark:bg-brand-900/40 text-brand-600 dark:text-brand-300 font-bold flex items-center justify-center text-sm">
+                            ${c.name.split(' ').map(n=>n[0]).join('')}
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-slate-900 dark:text-white text-sm">${c.name}</h4>
+                            <p class="text-xs text-slate-400">${c.email}</p>
+                        </div>
+                    </div>
+                    <div class="text-xs space-y-1 text-slate-600 dark:text-slate-300 pt-2 border-t border-slate-100 dark:border-slate-700">
+                        <p><i class="fa-solid fa-phone w-4 text-slate-400"></i> ${c.phone}</p>
+                        <p><i class="fa-solid fa-utensils w-4 text-slate-400"></i> Total Visits: <span class="font-semibold text-brand-600 dark:text-brand-400">${c.total_visits}</span></p>
+                        <p><i class="fa-solid fa-heart w-4 text-slate-400"></i> ${c.preferences || 'No dietary preferences listed'}</p>
+                    </div>
+                </div>
+            `).join('') || `<div class="col-span-full text-center text-xs text-slate-400 py-8">No matching customer profiles found.</div>`;
+        }
+
+        // --- REAL-TIME AVAILABILITY CHECK MODULE ---
+        function checkAvailability() {
+            const date = document.getElementById('availDate').value;
+            const guests = parseInt(document.getElementById('availGuests').value) || 1;
+            const location = document.getElementById('availLocation').value;
+            const resultsContainer = document.getElementById('availResultsContainer');
+
+            const matchedTables = tables.filter(t => {
+                const fitsCapacity = t.capacity >= guests;
+                const matchesLocation = location === 'All' || t.location === location;
+                const isAvailable = t.status === 'Available';
+                return fitsCapacity && matchesLocation && isAvailable;
+            });
+
+            if (matchedTables.length === 0) {
+                resultsContainer.innerHTML = `
+                    <div class="p-6 bg-rose-50 dark:bg-rose-900/20 text-rose-600 rounded-2xl text-center text-xs font-semibold">
+                        No tables currently available for ${guests} guests on ${date} matching specifications.
+                    </div>
+                `;
+                return;
+            }
+
+            resultsContainer.innerHTML = `
+                <h4 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Available Tables (${matchedTables.length})</h4>
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                    ${matchedTables.map(t => `
+                        <div class="bg-white dark:bg-slate-800 p-4 rounded-2xl border border-slate-100 dark:border-slate-700 shadow-sm flex items-center justify-between">
+                            <div>
+                                <h5 class="font-bold text-slate-800 dark:text-white text-sm">${t.name}</h5>
+                                <p class="text-xs text-slate-400">${t.capacity}-Seater • ${t.location} Zone</p>
+                            </div>
+                            <button onclick="openBookingModal(null, ${t.id})" class="px-3 py-1.5 bg-brand-500 hover:bg-brand-600 text-white font-semibold text-xs rounded-xl shadow-sm transition">
+                                Book Now
+                            </button>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+        }
+
+        // --- BOOKING CALENDAR MODULE ---
+        function renderCalendar() {
+            const grid = document.getElementById('calendarGrid');
+            const totalDays = 31; // Representing July 2026
+            let html = '';
+
+            for (let i = 1; i <= totalDays; i++) {
+                const dateStr = `2026-07-${i < 10 ? '0' + i : i}`;
+                const count = bookings.filter(b => b.booking_date === dateStr).length;
+
+                html += `
+                    <div onclick="selectCalendarDate('${dateStr}')" class="bg-slate-50 dark:bg-slate-700/50 hover:bg-brand-50 dark:hover:bg-brand-900/30 p-2 rounded-xl min-h-[60px] cursor-pointer transition flex flex-col justify-between border border-transparent hover:border-brand-300">
+                        <span class="text-xs font-bold text-slate-700 dark:text-slate-300">${i}</span>
+                        ${count > 0 ? `<span class="text-[10px] bg-brand-500 text-white font-semibold px-1.5 py-0.5 rounded-md self-start">${count} Bookings</span>` : ''}
+                    </div>
+                `;
+            }
+            grid.innerHTML = html;
+        }
+
+        function selectCalendarDate(dateStr) {
+            const details = document.getElementById('calendarDayDetails');
+            const title = document.getElementById('selectedCalDateTitle');
+            const list = document.getElementById('selectedCalDateList');
+
+            const dayBookings = bookings.filter(b => b.booking_date === dateStr);
+            title.innerText = `Bookings for Date: ${dateStr}`;
+
+            list.innerHTML = dayBookings.map(b => `
+                <div class="p-3 bg-slate-50 dark:bg-slate-700/40 rounded-xl flex items-center justify-between text-xs">
+                    <div>
+                        <span class="font-bold text-slate-800 dark:text-white">${b.cust_name}</span> (${b.party_size} Guests)
+                        <span class="text-slate-400 ml-2">${b.booking_time}</span>
+                    </div>
+                    ${getStatusBadge(b.status)}
+                </div>
+            `).join('') || `<p class="text-xs text-slate-400">No bookings scheduled for this date.</p>`;
+
+            details.classList.remove('hidden');
+        }
+
+        // --- REPORTS & ANALYTICS MODULE ---
+        function renderReports() {
+            const statusContainer = document.getElementById('reportStatusBars');
+            const locationContainer = document.getElementById('reportLocationBars');
+
+            const statuses = ['Available', 'Reserved', 'Occupied', 'Out of Service'];
+            statusContainer.innerHTML = statuses.map(st => {
+                const count = tables.filter(t => t.status === st).length;
+                const percentage = tables.length ? Math.round((count / tables.length) * 100) : 0;
+                return `
+                    <div>
+                        <div class="flex justify-between text-xs font-semibold mb-1">
+                            <span class="text-slate-700 dark:text-slate-300">${st} Tables</span>
+                            <span class="text-slate-400">${count} (${percentage}%)</span>
+                        </div>
+                        <div class="w-full bg-slate-100 dark:bg-slate-700 h-2.5 rounded-full overflow-hidden">
+                            <div class="h-full ${getStatusColorClass(st)}" style="width: ${percentage}%"></div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            const locations = ['Window', 'Center', 'Private', 'Outdoor'];
+            locationContainer.innerHTML = locations.map(loc => {
+                const locTables = tables.filter(t => t.location === loc);
+                const percentage = tables.length ? Math.round((locTables.length / tables.length) * 100) : 0;
+                return `
+                    <div>
+                        <div class="flex justify-between text-xs font-semibold mb-1">
+                            <span class="text-slate-700 dark:text-slate-300">${loc} Zone Capacity</span>
+                            <span class="text-slate-400">${locTables.length} tables (${percentage}%)</span>
+                        </div>
+                        <div class="w-full bg-slate-100 dark:bg-slate-700 h-2.5 rounded-full overflow-hidden">
+                            <div class="h-full bg-brand-500" style="width: ${percentage}%"></div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function exportReports() {
+            let csvContent = "data:text/csv;charset=utf-8,";
+            csvContent += "Table Name,Capacity,Location,Floor,Status\n";
+            tables.forEach(t => {
+                csvContent += `${t.name},${t.capacity},${t.location},${t.floor},${t.status}\n`;
+            });
+
+            const encodedUri = encodeURI(csvContent);
+            const link = document.createElement("a");
+            link.setAttribute("href", encodedUri);
+            link.setAttribute("download", "tablebook_report.csv");
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            showToast('Table occupancy report downloaded (CSV)');
+        }
+
+        // --- UTILITY HELPERS ---
+        function getStatusBadge(status) {
+            const badges = {
+                Available: '<span class="px-2.5 py-1 rounded-full text-[11px] font-bold bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-400">Available</span>',
+                Reserved: '<span class="px-2.5 py-1 rounded-full text-[11px] font-bold bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-400">Reserved</span>',
+                Occupied: '<span class="px-2.5 py-1 rounded-full text-[11px] font-bold bg-rose-100 text-rose-700 dark:bg-rose-900/40 dark:text-rose-400">Occupied</span>',
+                'Out of Service': '<span class="px-2.5 py-1 rounded-full text-[11px] font-bold bg-slate-100 text-slate-600 dark:bg-slate-700 dark:text-slate-400">Out of Service</span>',
+                Pending: '<span class="px-2.5 py-1 rounded-full text-[11px] font-bold bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-400">Pending</span>',
+                Confirmed: '<span class="px-2.5 py-1 rounded-full text-[11px] font-bold bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-400">Confirmed</span>',
+                Seated: '<span class="px-2.5 py-1 rounded-full text-[11px] font-bold bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-400">Seated</span>',
+                Cancelled: '<span class="px-2.5 py-1 rounded-full text-[11px] font-bold bg-rose-100 text-rose-700 dark:bg-rose-900/40 dark:text-rose-400">Cancelled</span>',
+                'No-Show': '<span class="px-2.5 py-1 rounded-full text-[11px] font-bold bg-slate-100 text-slate-600 dark:bg-slate-700 dark:text-slate-400">No-Show</span>'
+            };
+            return badges[status] || `<span class="px-2.5 py-1 rounded-full text-[11px] font-bold bg-slate-100 text-slate-600">${status}</span>`;
+        }
+
+        function getStatusColorClass(status) {
+            return {
+                Available: 'bg-emerald-500',
+                Reserved: 'bg-amber-500',
+                Occupied: 'bg-rose-500',
+                'Out of Service': 'bg-slate-400'
+            }[status] || 'bg-brand-500';
+        }
+
+        function refreshCurrentView() {
+            renderDashboard();
+            renderTables();
+            renderBookings();
+            renderFloorPlan();
+            renderCustomers();
+            renderCalendar();
+            renderReports();
+        }
+
+        // --- APP INITIALIZATION ---
+        window.onload = function() {
+            document.getElementById('availDate').value = new Date().toISOString().split('T')[0];
+            refreshCurrentView();
+        };
+    </script>
+</body>
+</html>
